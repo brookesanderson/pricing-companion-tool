@@ -47,6 +47,7 @@
   const SHIP = [
     { key: 'standard', label: 'Standard', sub: 'Within 100 miles', price: 295 },
     { key: 'extended', label: 'Extended', sub: '100+ miles away', price: 495 },
+    { key: 'akhi', label: 'Alaska & Hawaii', sub: 'AK & HI addresses', price: 550 },
   ];
 
   const WARRANTY = [
