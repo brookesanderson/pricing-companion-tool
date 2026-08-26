@@ -151,6 +151,7 @@
         ].map((r) => r.label + ': ' + r.value).join(' + ');
     // each checkout-link component in its own field (blank for the parts a
     // rental link doesn't carry) so the sheet mirrors the URL-generator columns
+    const shipObj = SHIP.find((x) => x.key === state.shipping) || SHIP[0];
     const parts = {
       agentId: state.repAgent || '',
       customerFirstName: (state.customerFirstName || '').trim(),
@@ -161,6 +162,9 @@
       discountApplied: (!vals.isRent && (vals.discountDescription || vals.heroDiscountDescription))
         ? [vals.discountDescription, vals.heroDiscountDescription].filter(Boolean).join(' + ')
         : '',
+      // selected shipping & installation option; recorded for both buy and rent
+      // since shipping is chosen either way and the Subtotal column excludes it.
+      shipping: shipObj.label,
     };
     return { quoteLines, parts };
   }

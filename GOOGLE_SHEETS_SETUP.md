@@ -19,6 +19,7 @@ from receiving the quote. The payload looks like:
   "trainer": "Tonal 2",
   "accessories": "Essential Accessories",
   "warranty": "5-Year Warranty",
+  "shipping": "Alaska & Hawaii",
   "coupon": "Trainer discount (20%): -$859; Coupon: BFCM11NYE",
   "timestamp": "2026-08-04T17:03:39.306Z"
 }
@@ -37,7 +38,7 @@ still see what to quote the customer.
 Columns stay in the order already deployed there:
 
 ```
-A Timestamp | B Contact Method | C Contact Info | D Quote Details (Pre-Tax, Shipping and Discount) | E Subtotal (Pre-Tax, Shipping and Discount) | F Store | G Purchase Link | H Agent ID | I Mode | J Trainer | K Accessories | L Warranty | M Coupon
+A Timestamp | B Contact Method | C Contact Info | D Quote Details (Pre-Tax, Shipping and Discount) | E Subtotal (Pre-Tax, Shipping and Discount) | F Store | G Purchase Link | H Agent ID | I Mode | J Trainer | K Accessories | L Warranty | M Coupon | N Shipping
 ```
 
 Its `doPost`:
@@ -60,6 +61,7 @@ function doPost(e) {
     sanitize(data.accessories),                                   // K Accessories
     sanitize(data.warranty),                                      // L Warranty
     sanitize(data.coupon),                                        // M Coupon
+    sanitize(data.shipping),                                      // N Shipping
   ]);
   return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
     .setMimeType(ContentService.MimeType.JSON);
@@ -82,7 +84,7 @@ Store and Agent ID move to the leftmost columns (A, B); everything else keeps
 its previous relative order, shifted right:
 
 ```
-A Store | B Agent ID | C Timestamp | D Contact Method | E Contact Info | F Quote Details (Pre-Tax, Shipping and Discount) | G Subtotal (Pre-Tax, Shipping and Discount) | H Purchase Link | I Mode | J Trainer | K Accessories | L Warranty | M Coupon
+A Store | B Agent ID | C Timestamp | D Contact Method | E Contact Info | F Quote Details (Pre-Tax, Shipping and Discount) | G Subtotal (Pre-Tax, Shipping and Discount) | H Purchase Link | I Mode | J Trainer | K Accessories | L Warranty | M Coupon | N Shipping
 ```
 
 Its `doPost` — note **`getSheetByName('test')`** instead of
@@ -107,6 +109,7 @@ function doPost(e) {
     sanitize(data.accessories),                                     // K Accessories
     sanitize(data.warranty),                                        // L Warranty
     sanitize(data.coupon),                                          // M Coupon
+    sanitize(data.shipping),                                        // N Shipping
   ]);
   return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
     .setMimeType(ContentService.MimeType.JSON);
@@ -120,8 +123,13 @@ function sanitize(v) {
 ```
 
 Make sure row 1 of the **test** tab has matching headers in that same order
-(A Store, B Agent ID, C Timestamp, ... M Coupon) before quotes start
-appending.
+(A Store, B Agent ID, C Timestamp, ... M Coupon, N Shipping) before quotes
+start appending.
+
+The **Shipping** field is the selected shipping & installation option — one of
+`Standard`, `Extended`, or `Alaska & Hawaii`. It is recorded for both buy and
+rent quotes, and is the only column that reflects shipping, since the Subtotal
+column deliberately excludes it.
 
 ## app.js — the two webhook URLs
 
